@@ -26,7 +26,7 @@ services:
   #   container_name: monitor-simulator
   #   depends_on:
   #     - influxdb
-# 3. SCANNER DEL COMPAÑERO (Auditoría de Vulnerabilidades)
+# 3. SCANNER DEL COMPAÑERO (Auditoría de Vulnerabilidad                           
   cve_scanner:
     build:
       context: ./cve/cve_scanner
@@ -35,25 +35,25 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./cve/cve_scanner/output:/app/output
+      - ./cve/cve_scanner/scanner_backend/output:/app/output
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
-      - internal_net
+      - internal_net  # Red privada para la parte del compañero
 
-  # 4. FRONTEND DEL COMPAÑERO (RUTA CORREGIDA)
+  # 4. FRONTEND DEL COMPAÑERO (Interfaz del Escáner)
   cve_frontend_v2:
     build:
-      context: ./cve/cve_scanner/frontend  # <--- Cambiado de scanner_frontend a frontend
-      dockerfile: Dockerfile               # <--- Esto asume que hay un Dockerfile dentro de esa carpeta
+      context: ./cve/cve_scanner/scanner_frontend
+      dockerfile: Dockerfile
     container_name: cve_frontend
     ports:
       - "5173:5173"
     depends_on:
       - cve_scanner
     networks:
-      - internal_net
-#
+      - internal_net  # Red privada para la parte del compañero
+
 networks:
   internal_net:
     driver: bridge
