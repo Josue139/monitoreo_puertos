@@ -1,0 +1,25 @@
+{
+  "vulnerabilidades": [
+    {
+      "cve": "CVE-2020-1234",
+      "libreria": "http",
+      "version": "2.4.41",
+      "score": 7.5,
+      "severidad": "HIGH",
+      "fecha_publicacion": "2020-05-10",
+      "fecha_detectado": "2026-03-23T12:00:00",
+      "descripcion": "Ejemplo de vulnerabilidad.",
+      "vector": "AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "impacto": {
+        "confidencialidad": "HIGH",
+        "integridad": "HIGH",
+        "disponibilidad": "HIGH"
+      },
+      "fix": "Actualizar a 2.4.43",
+      "sugerencia": "Aplicar parche oficial.",
+      "driver": null,
+      "origen": "servicio",
+      "enlace": "https://www.cve.org/CVERecord?id=CVE-2020-1234"
+    }
+  ]
+}

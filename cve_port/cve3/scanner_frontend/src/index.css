@@ -1,0 +1,70 @@
+/* ============================================================
+   SISTEMA DE TEMAS GLOBAL (DARK AZUL MODERNO + LIGHT MODERNO)
+   Este archivo controla TODOS los colores del dashboard.
+============================================================ */
+
+/* ----------------------------
+   🎨 Tema Azul Moderno (Dark)
+   - Es el tema por defecto
+   - Inspirado en dashboards modernos
+---------------------------- */
+:root {
+  --bg: #0a192f;          /* Fondo general */
+  --bg-card: #112240;     /* Fondo de tarjetas */
+  --text: #e6f1ff;        /* Texto principal */
+  --text-muted: #8892b0;  /* Texto secundario */
+  --border: #233554;      /* Bordes */
+
+  /* Colores para gráficos */
+  --chart-low: #22c55e;
+  --chart-medium: #eab308;
+  --chart-high: #f97316;
+  --chart-critical: #ef4444;
+  --chart-line: #64ffda;
+  --chart-donut: #3b82f6;
+}
+
+/* ----------------------------
+   🌞 Tema Claro Moderno
+   - Se activa con data-theme="light"
+---------------------------- */
+[data-theme="light"] {
+  --bg: #f5f7fa;
+  --bg-card: #ffffff;
+  --text: #1a1a1a;
+  --text-muted: #6b7280;
+  --border: #d1d5db;
+
+  --chart-low: #16a34a;
+  --chart-medium: #ca8a04;
+  --chart-high: #ea580c;
+  --chart-critical: #dc2626;
+  --chart-line: #2563eb;
+  --chart-donut: #3b82f6;
+}
+
+/* ----------------------------
+   🧱 Estilos base
+---------------------------- */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+
+#root {
+  max-width: 1126px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ----------------------------
+   ✨ Transición suave entre temas
+---------------------------- */
+* {
+  transition: background-color 0.25s ease,
+              color 0.25s ease,
+              border-color 0.25s ease;
+}
+

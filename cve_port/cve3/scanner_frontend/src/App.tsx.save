@@ -1,0 +1,45 @@
+import './App.css';
+import { useState, useEffect } from 'react';
+import { VulnerabilidadesTable } from "./VulnerabilidadesTable";
+import type { Vulnerabilidad } from "./types";
+import mock from "./mock.json";
+import { GraficoSeveridad } from "./GraficoSeveridad";
+
+function App() {
+  const [vulns, setVulns] = useState<Vulnerabilidad[]>([]);
+
+  useEffect(() => {
+    setVulns(mock.vulnerabilidades);
+  }, []);
+
+  return (
+    <div className="app-root">
+      <header className="app-header">
+        <h1>CVE Scanner Dashboard</h1>
+        <p>Resumen de vulnerabilidades detectadas</p>
+      </header>
+
+      <main className="app-main">
+        <section className="card">
+          <h2>Resumen</h2>
+          <div className="summary-grid">
+            <div className="summary-item">
+              <span className="summary-label">Total vulnerabilidades</span>
+              <span className="summary-value">{vulns.length}</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="card full">
+          <h2>Vulnerabilidades detectadas</h2>
+          <p><VulnerabilidadesTable data={vulns} /></p>
+        </section>
+
+	
+      </main>
+    </div>
+  );
+}
+
+export default App;
+

@@ -1,0 +1,41 @@
+import './App.css';
+import { useState, useEffect } from 'react';
+import { VulnerabilidadesTable } from "./VulnerabilidadesTable";
+import type { Vulnerabilidad } from "./types";
+
+function App() {
+  const [vulns, setVulns] = useState([]);
+
+  useEffect(() => {
+    // Más adelante cargaremos tu JSON real
+  }, []);
+
+  return (
+    <div className="app-root">
+      <header className="app-header">
+        <h1>CVE Scanner Dashboard</h1>
+        <p>Resumen de vulnerabilidades detectadas</p>
+      </header>
+
+      <main className="app-main">
+        <section className="card">
+          <h2>Resumen</h2>
+          <div className="summary-grid">
+            <div className="summary-item">
+              <span className="summary-label">Total vulnerabilidades</span>
+              <span className="summary-value">{vulns.length}</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="card full">
+          <h2>Vulnerabilidades detectadas</h2>
+          <p>Aquí irá la tabla más adelante</p>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+export default App;
+

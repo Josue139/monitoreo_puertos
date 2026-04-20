@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.80 scan initiated Mon Mar 16 13:10:56 2026 as: nmap -sV -p0-1024,8000-8999 -oX resultado.xml localhost -->
+<nmaprun scanner="nmap" args="nmap -sV -p0-1024,8000-8999 -oX resultado.xml localhost" start="1773663056" startstr="Mon Mar 16 13:10:56 2026" version="7.80" xmloutputversion="1.04">
+<scaninfo type="connect" protocol="tcp" numservices="2025" services="0-1024,8000-8999"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1773663056" endtime="1773663062"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="127.0.0.1" addrtype="ipv4"/>
+<hostnames>
+<hostname name="localhost" type="user"/>
+<hostname name="localhost" type="PTR"/>
+</hostnames>
+<ports><extraports state="closed" count="2021">
+<extrareasons reason="conn-refused" count="2021"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" product="OpenSSH" version="8.2p1 Ubuntu 4ubuntu0.13" extrainfo="Ubuntu Linux; protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.2p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="Apache httpd" version="2.4.41" extrainfo="(Ubuntu)" method="probed" conf="10"><cpe>cpe:/a:apache:http_server:2.4.41</cpe></service></port>
+<port protocol="tcp" portid="631"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ipp" product="CUPS" version="2.3" method="probed" conf="10"><cpe>cpe:/a:apple:cups:2.3</cpe></service></port>
+<port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="Oracle XML DB Enterprise Edition httpd" method="probed" conf="10"><cpe>cpe:/a:oracle:database_server:::enterprise</cpe></service></port>
+</ports>
+<times srtt="26" rttvar="22" to="100000"/>
+</host>
+<runstats><finished time="1773663062" timestr="Mon Mar 16 13:11:02 2026" elapsed="6.39" summary="Nmap done at Mon Mar 16 13:11:02 2026; 1 IP address (1 host up) scanned in 6.39 seconds" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

@@ -1,0 +1,253 @@
+/* ============================================================
+   🎨 ESTILOS GENERALES DEL DASHBOARD
+   Todos los colores provienen de index.css (variables CSS)
+============================================================ */
+
+/* ----------------------------
+   📦 Contenedor principal
+---------------------------- */
+.app-root {
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* ----------------------------
+   🏷️ Encabezado
+---------------------------- */
+.app-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.app-header p {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+}
+
+/* Botón de tema */
+.theme-button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* ----------------------------
+   🧱 Grid principal
+---------------------------- */
+.app-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-auto-rows: min-content;
+  gap: 16px;
+}
+
+/* ----------------------------
+   🗂️ Tarjetas
+---------------------------- */
+.card {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.card.full {
+  grid-column: 1 / span 2;
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  color: #0EA5E9;
+}
+
+/* ============================================================
+   📊 SECCIÓN: RESUMEN
+============================================================ */
+
+.summary-grid {
+  display: flex;
+  gap: 16px;
+}
+
+.summary-item {
+  flex: 1;
+  background-color: var(--bg-card);
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: default;
+  user-select: none;
+}
+
+[data-theme="light"] .summary-item {
+  background-color: #ffffff;
+}
+
+.summary-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.summary-value {
+  font-size: 26px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+/* ============================================================
+   📋 TABLA DE VULNERABILIDADES
+============================================================ */
+
+.table-wrapper {
+  max-height: none;
+  overflow-y: visible;
+}
+
+.vuln-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.vuln-table th,
+.vuln-table td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.vuln-table th {
+  text-align: left;
+  color: #0EA5E9;
+  position: sticky;
+  top: 0;
+  background-color: var(--bg-card);
+  font-weight: 600;
+}
+
+.vuln-table tr:hover {
+  background-color: rgba(148, 163, 184, 0.15);
+}
+
+/* ----------------------------
+   🎨 Etiquetas de severidad
+---------------------------- */
+.sev-low {
+  background-color: #22c55e;
+  color: white !important;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.sev-medium {
+  background-color: #eab308;
+  color: white !important;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.sev-high {
+  background-color: #f97316;
+  color: white !important;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.sev-critical {
+  background-color: #ef4444;
+  color: white !important;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* ============================================================
+   📈 GRÁFICOS
+============================================================ */
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.chart-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 220px;
+}
+
+/* ============================================================
+   🔗 ENLACES CVE (clic → morado temporal)
+============================================================ */
+
+.cve-link:active {
+  color: #A855F7 !important;
+}
+
+/* ============================================================
+   🧩 ACORDEÓN PREMIUM (InfoSistema)
+============================================================ */
+
+.accordion {
+  margin-top: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background-color: var(--bg-card);
+}
+
+.accordion-header {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #0EA5E9;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+
+.accordion-header:hover {
+  background-color: rgba(14, 165, 233, 0.15);
+}
+
+.accordion-content {
+  padding: 10px 14px;
+  animation: fadeIn 0.25s ease;
+}
+
+.accordion-item {
+  padding: 4px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* Animación suave */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

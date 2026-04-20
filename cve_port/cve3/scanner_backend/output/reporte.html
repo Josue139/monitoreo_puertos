@@ -1,0 +1,557 @@
+
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Reporte de Vulnerabilidades</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: #f4f4f4;
+            }
+            h1 {
+                color: #333;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            th, td {
+                padding: 8px;
+                border: 1px solid #ccc;
+                text-align: left;
+                font-size: 12px;
+            }
+            th {
+                background-color: #333;
+                color: white;
+            }
+            .LOW {
+                background-color: #b3ffb3;
+            }
+            .MEDIUM {
+                background-color: #ffe680;
+            }
+            .HIGH {
+                background-color: #ffb366;
+            }
+            .CRITICAL {
+                background-color: #ff6666;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Reporte de Vulnerabilidades</h1>
+        <p><strong>IP escaneada:</strong> host.docker.internal</p>
+        <p><strong>Total de CVEs:</strong> 27</p>
+
+        <table>
+            <tr>
+                <th>CVE</th>
+                <th>Librería</th>
+                <th>Versión</th>
+                <th>Score</th>
+                <th>Severidad</th>
+                <th>Fecha publ.</th>
+                <th>Fecha detectado</th>
+                <th>Vector</th>
+                <th>C</th>
+                <th>I</th>
+                <th>A</th>
+                <th>Fix</th>
+                <th>Sugerencia</th>
+                <th>Origen</th>
+                <th>Enlace</th>
+            </tr>
+    
+            <tr class="CRITICAL">
+                <td>CVE-2022-35411</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>9.8</td>
+                <td>CRITICAL</td>
+                <td>2022-07-08</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2022-35411">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="CRITICAL">
+                <td>CVE-2023-25076</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>9.8</td>
+                <td>CRITICAL</td>
+                <td>2023-03-30</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2023-25076">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="CRITICAL">
+                <td>CVE-2026-30832</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>9.1</td>
+                <td>CRITICAL</td>
+                <td>2026-03-07</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:L</td>
+                <td>HIGH</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2026-30832">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="HIGH">
+                <td>CVE-2023-0242</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>8.8</td>
+                <td>HIGH</td>
+                <td>2023-01-18</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2023-0242">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="HIGH">
+                <td>CVE-2025-31491</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>8.6</td>
+                <td>HIGH</td>
+                <td>2025-04-15</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N</td>
+                <td>HIGH</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2025-31491">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="HIGH">
+                <td>CVE-2025-65958</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>8.5</td>
+                <td>HIGH</td>
+                <td>2025-12-04</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:N</td>
+                <td>HIGH</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2025-65958">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="HIGH">
+                <td>CVE-2024-8642</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>8.1</td>
+                <td>HIGH</td>
+                <td>2024-09-11</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2024-8642">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="HIGH">
+                <td>CVE-2026-21697</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>8.1</td>
+                <td>HIGH</td>
+                <td>2026-01-07</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2026-21697">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="HIGH">
+                <td>CVE-2025-53967</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>8.0</td>
+                <td>HIGH</td>
+                <td>2025-10-08</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:A/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:N</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2025-53967">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="HIGH">
+                <td>CVE-2020-7659</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>7.5</td>
+                <td>HIGH</td>
+                <td>2020-06-01</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N</td>
+                <td>NONE</td>
+                <td>HIGH</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2020-7659">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="HIGH">
+                <td>CVE-2023-38505</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>7.5</td>
+                <td>HIGH</td>
+                <td>2023-07-27</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>HIGH</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2023-38505">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2024-4536</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>6.8</td>
+                <td>MEDIUM</td>
+                <td>2024-05-07</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:A/AC:H/PR:H/UI:N/S:C/C:H/I:L/A:L</td>
+                <td>HIGH</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2024-4536">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2021-22548</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>6.5</td>
+                <td>MEDIUM</td>
+                <td>2021-06-08</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:L</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>LOW</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2021-22548">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2021-22549</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>6.5</td>
+                <td>MEDIUM</td>
+                <td>2021-06-08</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:L</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>LOW</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2021-22549">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2021-22550</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>6.5</td>
+                <td>MEDIUM</td>
+                <td>2021-06-08</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:L</td>
+                <td>HIGH</td>
+                <td>HIGH</td>
+                <td>LOW</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2021-22550">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2015-9430</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>6.1</td>
+                <td>MEDIUM</td>
+                <td>2019-09-26</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2015-9430">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2015-9453</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>6.1</td>
+                <td>MEDIUM</td>
+                <td>2019-10-07</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2015-9453">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2025-64115</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>6.1</td>
+                <td>MEDIUM</td>
+                <td>2025-10-30</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2025-64115">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2024-4435</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>5.9</td>
+                <td>MEDIUM</td>
+                <td>2024-05-21</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>HIGH</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2024-4435">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2026-25528</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>5.8</td>
+                <td>MEDIUM</td>
+                <td>2026-02-09</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:N/A:N</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2026-25528">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2026-34981</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>5.8</td>
+                <td>MEDIUM</td>
+                <td>2026-04-06</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:N/A:N</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2026-34981">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2025-46719</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>5.4</td>
+                <td>MEDIUM</td>
+                <td>2025-05-05</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2025-46719">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2021-22552</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>5.3</td>
+                <td>MEDIUM</td>
+                <td>2021-08-02</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:L/A:N</td>
+                <td>HIGH</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2021-22552">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2021-22563</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>4.5</td>
+                <td>MEDIUM</td>
+                <td>2021-11-01</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2021-22563">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2021-22564</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>4.5</td>
+                <td>MEDIUM</td>
+                <td>2021-11-01</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>LOW</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2021-22564">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2020-2282</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>4.3</td>
+                <td>MEDIUM</td>
+                <td>2020-09-23</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N</td>
+                <td>NONE</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2020-2282">Ver CVE</a></td>
+            </tr>
+        
+            <tr class="MEDIUM">
+                <td>CVE-2024-6746</td>
+                <td>http</td>
+                <td>0.6</td>
+                <td>4.3</td>
+                <td>MEDIUM</td>
+                <td>2024-07-15</td>
+                <td>2026-04-17T11:13:49</td>
+                <td>CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N</td>
+                <td>LOW</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>No disponible</td>
+                <td>Revisar documentación oficial del proveedor para mitigaciones.</td>
+                <td>servicio</td>
+                <td><a href="https://www.cve.org/CVERecord?id=CVE-2024-6746">Ver CVE</a></td>
+            </tr>
+        
+        </table>
+    </body>
+    </html>
+    

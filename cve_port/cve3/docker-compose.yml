@@ -1,0 +1,31 @@
+services:
+  scanner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cve_scanner
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./scanner_backend/output:/app/output
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - internal_net
+
+  frontend:
+    build:
+      context: ./scanner_frontend
+      dockerfile: Dockerfile
+    container_name: cve_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - scanner
+    networks:
+      - internal_net
+
+networks:
+  internal_net:
+    driver: bridge
+

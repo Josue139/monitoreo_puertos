@@ -1,0 +1,2 @@
+# Ejecutar el script cada 6 horas
+0 */6 * * * root /app/run.sh >> /var/log/cron.log 2>&1
