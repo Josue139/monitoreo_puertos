@@ -5,7 +5,7 @@ export default function Sistema() {
   const [drivers, setDrivers] = useState(null);
 
   useEffect(() => {
-    fetch("/api/drivers")
+    fetch( "http://localhost:9000/api/drivers")
       .then(res => res.json())
       .then(data => {
         console.log("JSON recibido:", data);

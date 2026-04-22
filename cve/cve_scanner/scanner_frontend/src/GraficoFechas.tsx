@@ -37,7 +37,7 @@ export function GraficoFechas() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/historial")
+    fetch( "http://localhost:9000/api/historial")
       .then((res) => res.json())
       .then((data) => {
         setHistorialOriginal(data); // Guardamos copia original
@@ -155,7 +155,7 @@ export function GraficoFechas() {
 
     if (!confirmar) return;
 
-    await fetch("/api/reset", { method: "POST" });
+    await fetch( "http://localhost:9000/api/reset", { method: "POST" });
 
     setLabels([]);
     setValues([]);

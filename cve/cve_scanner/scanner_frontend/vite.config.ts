@@ -8,9 +8,11 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:9000',   // 🔥 Backend ahora está en host
+        target: 'http://127.0.0.1:9000',
         changeOrigin: true,
-        secure: false
+        secure: false,
+        // Esto quita "/api" de la URL antes de enviarla a Flask
+        rewrite: (path) => path.replace(/^\/api/, '')
       },
     },
   },
