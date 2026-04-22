@@ -8,10 +8,10 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://scanner:9000',
+        target: 'http://localhost:9000',   // 🔥 Backend ahora está en host
         changeOrigin: true,
+        secure: false
       },
     },
   },
 })
-

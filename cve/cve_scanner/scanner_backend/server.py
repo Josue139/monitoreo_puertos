@@ -1,13 +1,15 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
-import json
 import os
+import json
+import subprocess
+from drivers_scanner import get_system_summary
 
 app = Flask(__name__)
-CORS(app)  # Permite peticiones desde el frontend
+CORS(app)
 
 # -----------------------------
-# Endpoint original
+#  GET /reporte
 # -----------------------------
 @app.get("/reporte")
 def get_reporte():
@@ -21,7 +23,7 @@ def get_reporte():
     return jsonify(data)
 
 # -----------------------------
-# Endpoint para React
+#  GET /api/reporte
 # -----------------------------
 @app.get("/api/reporte")
 def api_reporte():
@@ -35,27 +37,19 @@ def api_reporte():
     return jsonify(data)
 
 # -----------------------------
-# Endpoint solo drivers
+#  GET /api/drivers
 # -----------------------------
 @app.get("/api/drivers")
 def api_drivers():
-    ruta = "output/reporte.json"
-    if not os.path.exists(ruta):
-        return jsonify({"error": "reporte.json no encontrado"}), 404
-
-    with open(ruta, "r") as f:
-        data = json.load(f)
-
-    return jsonify(data.get("drivers", {}))
+    info = get_system_summary()
+    return jsonify(info)
 
 # -----------------------------
-# Endpoint historial
+#  GET /api/historial
 # -----------------------------
 @app.get("/api/historial")
 def api_historial():
     ruta = "output/historial.json"
-
-    # Si no existe, devolver lista vacía
     if not os.path.exists(ruta):
         return jsonify([])
 
@@ -65,24 +59,44 @@ def api_historial():
     return jsonify(data)
 
 # -----------------------------
-# NUEVO: Endpoint para resetear historial
+#  POST /api/reset
 # -----------------------------
 @app.post("/api/reset")
-def reset_data():
+def api_reset():
     try:
-        ruta = "output/historial.json"
+        if os.path.exists("output/reporte.json"):
+            os.remove("output/reporte.json")
+        if os.path.exists("output/historial.json"):
+            os.remove("output/historial.json")
 
-        # Sobrescribe el archivo con una lista vacía
-        with open(ruta, "w") as f:
-            f.write("[]")
-
-        return jsonify({"status": "ok", "message": "Historial reiniciado correctamente."})
-
+        return jsonify({"status": "ok", "message": "Archivos eliminados"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
 # -----------------------------
-# Inicio del servidor
+#  POST /api/scan
+# -----------------------------
+@app.post("/api/scan")
+def api_scan():
+    try:
+        # Ejecutar scanner.py desde la ruta correcta
+        script_path = os.path.join(os.getcwd(), "scanner.py")
+
+        if not os.path.exists(script_path):
+            return jsonify({"status": "error", "message": "scanner.py no encontrado"}), 500
+
+        subprocess.run(["python3", script_path], check=True)
+
+        return jsonify({"status": "ok", "message": "Escaneo completado"})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"status": "error", "message": f"Error ejecutando scanner.py: {e}"}), 500
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+# -----------------------------
+#  MAIN
 # -----------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=9000)

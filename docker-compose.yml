@@ -1,4 +1,4 @@
-version: "3.3"
+#version: "3.3"
 
 services:
   # 1. Base de Datos
@@ -27,21 +27,49 @@ services:
   #   depends_on:
   #     - influxdb
 # 3. SCANNER DEL COMPAÑERO (Auditoría de Vulnerabilidad                           
+#  cve_scanner:
+#    build:
+#      context: ./cve/cve_scanner
+#      dockerfile: Dockerfile
+#    container_name: cve_scanner
+#    ports:
+#      - "9000:9000"
+#    volumes:
+#      - ./cve/cve_scanner/scanner_backend/output:/app/output
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+#    networks:
+#      - internal_net  # Red privada para la parte del compañero
+
+  # 4. FRONTEND DEL COMPAÑERO (Interfaz del Escáner)
+#  cve_frontend_v2:
+#    build:
+#      context: ./cve/cve_scanner/scanner_frontend
+#      dockerfile: Dockerfile
+#    container_name: cve_frontend
+#    ports:
+#      - "5173:5173"
+#    depends_on:
+#      - cve_scanner
+#    networks:
+#      - internal_net  # Red privada para la parte del compañero
+  # 3. SCANNER DEL COMPAÑERO (TU BACKEND)
   cve_scanner:
     build:
       context: ./cve/cve_scanner
       dockerfile: Dockerfile
     container_name: cve_scanner
-    ports:
-      - "9000:9000"
+    privileged: true
+    network_mode: "host"      # 🔥 Obligatorio para que tu backend funcione
     volumes:
       - ./cve/cve_scanner/scanner_backend/output:/app/output
+      - /proc:/proc
+      - /sys:/sys
+      - /dev:/dev
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    networks:
-      - internal_net  # Red privada para la parte del compañero
 
-  # 4. FRONTEND DEL COMPAÑERO (Interfaz del Escáner)
+  # 4. FRONTEND DEL SCANNER (TU DASHBOARD)
   cve_frontend_v2:
     build:
       context: ./cve/cve_scanner/scanner_frontend
@@ -52,8 +80,7 @@ services:
     depends_on:
       - cve_scanner
     networks:
-      - internal_net  # Red privada para la parte del compañero
-
+      - internal_net
 networks:
   internal_net:
     driver: bridge

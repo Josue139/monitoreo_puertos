@@ -1,4 +1,4 @@
-from drivers_scanner import scan_drivers_summary
+from drivers_scanner import scan_drivers_summary   # ← IMPORT CORRECTO
 
 import subprocess
 import xml.etree.ElementTree as ET
@@ -6,35 +6,50 @@ import requests
 import json
 import os
 from datetime import datetime
-import csv
 import sys
 
 API_NVD = "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch="
 
-# 🔥 NUEVO: función para guardar historial
-def guardar_historial(total):
-    ruta = "output/historial.json"
+# ============================================================
+#  NUEVAS FUNCIONES (NO ROMPEN NADA)
+# ============================================================
 
-    # Crear archivo si no existe
-    if not os.path.exists(ruta):
-        with open(ruta, "w") as f:
-            json.dump([], f)
-
-    # Leer historial existente
-    with open(ruta, "r") as f:
-        historial = json.load(f)
-
-    # Agregar nuevo registro
-    historial.append({
-        "fecha": datetime.now().strftime("%Y-%m-%d"),
-        "total": total
-    })
-
-    # Guardar historial actualizado
-    with open(ruta, "w") as f:
-        json.dump(historial, f, indent=2)
+def get_installed_libraries():
+    libs = []
+    try:
+        for root, dirs, files in os.walk("/usr/lib"):
+            for f in files:
+                if f.endswith(".so") or ".so." in f:
+                    libs.append(f)
+    except:
+        pass
+    return sorted(list(set(libs)))
 
 
+def get_network_interfaces():
+    try:
+        return os.listdir("/sys/class/net")
+    except:
+        return []
+
+
+def get_disks():
+    try:
+        return os.listdir("/sys/block")
+    except:
+        return []
+
+
+def get_kernel_modules():
+    try:
+        return os.listdir("/sys/module")
+    except:
+        return []
+
+
+# ============================================================
+#  FILTROS CVE
+# ============================================================
 def severidad_valida(score, minimo=4.0):
     return score >= minimo
 
@@ -45,6 +60,34 @@ def cve_reciente(cve_id, minimo=2015):
     except:
         return True
 
+
+# ============================================================
+#  APT
+# ============================================================
+def scan_apt_vulnerabilities():
+    vulnerables = []
+
+    try:
+        result = subprocess.run(
+            ["apt", "list", "--upgradable"],
+            capture_output=True,
+            text=True
+        )
+        lineas = result.stdout.splitlines()
+
+        for linea in lineas:
+            if "security" in linea.lower():
+                vulnerables.append(linea.strip())
+
+    except Exception as e:
+        vulnerables.append(f"Error al ejecutar APT: {e}")
+
+    return vulnerables
+
+
+# ============================================================
+#  NMAP
+# ============================================================
 def ejecutar_nmap(ip):
     print(f"Escaneando puertos de {ip}...")
 
@@ -67,6 +110,7 @@ def ejecutar_nmap(ip):
         return None
 
     return "resultado.xml"
+
 
 def extraer_servicios(xml_file):
     if xml_file is None:
@@ -106,6 +150,10 @@ def extraer_servicios(xml_file):
 
     return servicios
 
+
+# ============================================================
+#  CONSULTA CVE
+# ============================================================
 def consultar_cve(nombre, version):
     if not version:
         return []
@@ -117,39 +165,128 @@ def consultar_cve(nombre, version):
 
     try:
         r = requests.get(url, timeout=10)
-    except requests.exceptions.ConnectionError:
-        print("❌ Error: No hay conexión a internet.")
-        return []
-    except requests.exceptions.Timeout:
-        print("❌ Error: La API tardó demasiado en responder.")
-        return []
-    except Exception as e:
-        print(f"❌ Error consultando la API: {e}")
+    except:
         return []
 
     if r.status_code != 200:
-        print(f"❌ Error: La API devolvió código {r.status_code}")
         return []
 
     try:
         data = r.json()
     except:
-        print("❌ Error: La API devolvió datos inválidos.")
         return []
 
     return data.get("vulnerabilities", [])
 
-def clasificar_cvss(score):
-    if score <= 3.9:
-        return "LOW"
-    elif score <= 6.9:
-        return "MEDIUM"
-    elif score <= 8.9:
-        return "HIGH"
-    else:
-        return "CRITICAL"
 
-def generar_reporte(resultados, ip, drivers_info):
+def consultar_cve_keyword(query):
+    url = API_NVD + query
+    print(f"Buscando CVEs por keyword: {query}")
+
+    try:
+        r = requests.get(url, timeout=10)
+    except:
+        return []
+
+    if r.status_code != 200:
+        return []
+
+    try:
+        data = r.json()
+    except:
+        return []
+
+    return data.get("vulnerabilities", [])
+
+
+# ============================================================
+#  PROCESAR CVE
+# ============================================================
+def procesar_items_cve_en_reporte(items, libreria, version, origen, reporte):
+    for item in items:
+        cve_id = item["cve"]["id"]
+
+        if not cve_reciente(cve_id):
+            continue
+
+        enlace = f"https://www.cve.org/CVERecord?id={cve_id}"
+
+        try:
+            score = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["baseScore"]
+            categoria = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["baseSeverity"]
+        except:
+            score = 0
+            categoria = "UNKNOWN"
+
+        if not severidad_valida(score):
+            continue
+
+        try:
+            fecha_publicacion = item["cve"]["published"].split("T")[0]
+        except:
+            fecha_publicacion = "desconocida"
+
+        try:
+            descripcion = item["cve"]["descriptions"][0]["value"]
+        except:
+            descripcion = "Descripción no disponible"
+
+        try:
+            vector = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["vectorString"]
+        except:
+            vector = "No disponible"
+
+        try:
+            impacto_conf = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["confidentialityImpact"]
+            impacto_int = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["integrityImpact"]
+            impacto_disp = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["availabilityImpact"]
+        except:
+            impacto_conf = impacto_int = impacto_disp = "UNKNOWN"
+
+        fix = "No disponible"
+        try:
+            for node in item["cve"]["configurations"]["nodes"]:
+                for match in node.get("cpeMatch", []):
+                    if "versionEndExcluding" in match:
+                        fix = f"Actualizar a versión {match['versionEndExcluding']}"
+        except:
+            pass
+
+        sugerencia = (
+            f"Aplicar actualización recomendada: {fix}"
+            if fix != "No disponible"
+            else "Revisar documentación oficial del proveedor."
+        )
+
+        reporte.append({
+            "cve": cve_id,
+            "libreria": libreria,
+            "version": version,
+            "score": score,
+            "severidad": categoria,
+            "fecha_publicacion": fecha_publicacion,
+            "fecha_detectado": datetime.now().isoformat(timespec="seconds"),
+            "descripcion": descripcion,
+            "vector": vector,
+            "impacto": {
+                "confidencialidad": impacto_conf,
+                "integridad": impacto_int,
+                "disponibilidad": impacto_disp
+            },
+            "fix": fix,
+            "sugerencia": sugerencia,
+            "driver": None,
+            "origen": origen,
+            "enlace": enlace
+        })
+
+
+# ============================================================
+#  REPORTES
+# ============================================================
+def generar_reporte(resultados, ip, drivers_info, apt_vulnerables,
+                    interfaces, discos, modulos, librerias):
+
     os.makedirs("output", exist_ok=True)
 
     reporte_final = {
@@ -157,153 +294,33 @@ def generar_reporte(resultados, ip, drivers_info):
         "ip_escaneada": ip,
         "total_cves": len(resultados),
         "vulnerabilidades": resultados,
-        "drivers": drivers_info
+        "drivers": drivers_info,
+        "paquetes_vulnerables": apt_vulnerables,
+
+        # NUEVOS CAMPOS
+        "interfaces_red": interfaces,
+        "discos_detectados": discos,
+        "modulos_kernel": modulos,
+        "librerias_detectadas": librerias
     }
 
     with open("output/reporte.json", "w") as f:
         json.dump(reporte_final, f, indent=4)
 
-    with open("output/reporte.csv", "w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow([
-            "CVE", "Librería", "Versión", "Score", "Severidad",
-            "Fecha publicación", "Fecha detectado",
-            "Vector", "Confidencialidad", "Integridad", "Disponibilidad",
-            "Fix", "Sugerencia", "Origen", "Enlace"
-        ])
-        for r in resultados:
-            writer.writerow([
-                r["cve"],
-                r["libreria"],
-                r["version"],
-                r["score"],
-                r["severidad"],
-                r["fecha_publicacion"],
-                r["fecha_detectado"],
-                r["vector"],
-                r["impacto"]["confidencialidad"],
-                r["impacto"]["integridad"],
-                r["impacto"]["disponibilidad"],
-                r["fix"],
-                r["sugerencia"],
-                r["origen"],
-                r["enlace"]
-            ])
-
-    print("📄 Reportes generados: JSON y CSV")
-
-def generar_reporte_html(resultados, ip):
-    os.makedirs("output", exist_ok=True)
-
-    html = f"""
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Reporte de Vulnerabilidades</title>
-        <style>
-            body {{
-                font-family: Arial, sans-serif;
-                margin: 20px;
-                background-color: #f4f4f4;
-            }}
-            h1 {{
-                color: #333;
-            }}
-            table {{
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 20px;
-            }}
-            th, td {{
-                padding: 8px;
-                border: 1px solid #ccc;
-                text-align: left;
-                font-size: 12px;
-            }}
-            th {{
-                background-color: #333;
-                color: white;
-            }}
-            .LOW {{
-                background-color: #b3ffb3;
-            }}
-            .MEDIUM {{
-                background-color: #ffe680;
-            }}
-            .HIGH {{
-                background-color: #ffb366;
-            }}
-            .CRITICAL {{
-                background-color: #ff6666;
-            }}
-        </style>
-    </head>
-    <body>
-        <h1>Reporte de Vulnerabilidades</h1>
-        <p><strong>IP escaneada:</strong> {ip}</p>
-        <p><strong>Total de CVEs:</strong> {len(resultados)}</p>
-
-        <table>
-            <tr>
-                <th>CVE</th>
-                <th>Librería</th>
-                <th>Versión</th>
-                <th>Score</th>
-                <th>Severidad</th>
-                <th>Fecha publ.</th>
-                <th>Fecha detectado</th>
-                <th>Vector</th>
-                <th>C</th>
-                <th>I</th>
-                <th>A</th>
-                <th>Fix</th>
-                <th>Sugerencia</th>
-                <th>Origen</th>
-                <th>Enlace</th>
-            </tr>
-    """
-
-    for r in resultados:
-        html += f"""
-            <tr class="{r['severidad']}">
-                <td>{r['cve']}</td>
-                <td>{r['libreria']}</td>
-                <td>{r['version']}</td>
-                <td>{r['score']}</td>
-                <td>{r['severidad']}</td>
-                <td>{r['fecha_publicacion']}</td>
-                <td>{r['fecha_detectado']}</td>
-                <td>{r['vector']}</td>
-                <td>{r['impacto']['confidencialidad']}</td>
-                <td>{r['impacto']['integridad']}</td>
-                <td>{r['impacto']['disponibilidad']}</td>
-                <td>{r['fix']}</td>
-                <td>{r['sugerencia']}</td>
-                <td>{r['origen']}</td>
-                <td><a href="{r['enlace']}">Ver CVE</a></td>
-            </tr>
-        """
-
-    html += """
-        </table>
-    </body>
-    </html>
-    """
-
-    with open("output/reporte.html", "w") as f:
-        f.write(html)
-
-    print("📄 Reporte HTML generado: output/reporte.html")
+    print("📄 Reporte JSON generado")
 
 
+# ============================================================
+#  MAIN
+# ============================================================
 def main():
-    if len(sys.argv) > 1:
-        ip = sys.argv[1]
-    else:
-        ip = "host.docker.internal"
+    ip = sys.argv[1] if len(sys.argv) > 1 else "host.docker.internal"
 
     print(f"📌 Escaneando la IP: {ip}")
 
+    # -------------------------------
+    # NMAP
+    # -------------------------------
     xml = ejecutar_nmap(ip)
     servicios = extraer_servicios(xml)
 
@@ -311,100 +328,141 @@ def main():
 
     for s in servicios:
         cves = consultar_cve(s["nombre"], s["version"])
-        for item in cves:
-            cve_id = item["cve"]["id"]
+        procesar_items_cve_en_reporte(
+            cves, s["nombre"], s["version"], "servicio", reporte
+        )
 
-            if not cve_reciente(cve_id):
-                continue
-
-            enlace = f"https://www.cve.org/CVERecord?id={cve_id}"
-
-            try:
-                score = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["baseScore"]
-                categoria = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["baseSeverity"]
-            except:
-                score = 0
-                categoria = "UNKNOWN"
-
-            if not severidad_valida(score):
-                continue
-
-            try:
-                fecha_publicacion = item["cve"]["published"].split("T")[0]
-            except:
-                fecha_publicacion = "desconocida"
-
-            try:
-                descripcion = item["cve"]["descriptions"][0]["value"]
-            except:
-                descripcion = "Descripción no disponible"
-
-            try:
-                vector = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["vectorString"]
-            except:
-                vector = "No disponible"
-
-            try:
-                impacto_conf = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["confidentialityImpact"]
-                impacto_int = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["integrityImpact"]
-                impacto_disp = item["cve"]["metrics"]["cvssMetricV31"][0]["cvssData"]["availabilityImpact"]
-            except:
-                impacto_conf = impacto_int = impacto_disp = "UNKNOWN"
-
-            fix = "No disponible"
-            try:
-                for node in item["cve"]["configurations"]["nodes"]:
-                    for match in node.get("cpeMatch", []):
-                        if "versionEndExcluding" in match:
-                            fix = f"Actualizar a versión {match['versionEndExcluding']}"
-            except:
-                pass
-
-            if fix != "No disponible":
-                sugerencia = f"Aplicar actualización recomendada: {fix}"
-            else:
-                sugerencia = "Revisar documentación oficial del proveedor para mitigaciones."
-
-            vulnerabilidad = {
-                "cve": cve_id,
-                "libreria": s["nombre"],
-                "version": s["version"],
-                "score": score,
-                "severidad": categoria,
-                "fecha_publicacion": fecha_publicacion,
-                "fecha_detectado": datetime.now().isoformat(timespec="seconds"),
-                "descripcion": descripcion,
-                "vector": vector,
-                "impacto": {
-                    "confidencialidad": impacto_conf,
-                    "integridad": impacto_int,
-                    "disponibilidad": impacto_disp
-                },
-                "fix": fix,
-                "sugerencia": sugerencia,
-                "driver": None,
-                "origen": "servicio",
-                "enlace": enlace
-            }
-
-            reporte.append(vulnerabilidad)
-
-    print("DEBUG - Contenido de reporte:")
-    print(reporte)
-
-    try:
-        reporte.sort(key=lambda x: x.get("score", 0), reverse=True)
-    except Exception as e:
-        print(f"⚠️ No se pudo ordenar el reporte: {e}")
-
-    print("📌 Escaneando información del sistema (drivers/kernel)...")
+    # -------------------------------
+    # DRIVERS + KERNEL
+    # -------------------------------
     drivers_info = scan_drivers_summary()
+    kernel_version = drivers_info["kernel_version"]
 
-    generar_reporte(reporte, ip, drivers_info)
-    generar_reporte_html(reporte, ip)
+    if kernel_version:
+        base_version = kernel_version.split("-")[0]
+        query_kernel = f"linux kernel {base_version}"
+        cves_kernel = consultar_cve_keyword(query_kernel)
+        procesar_items_cve_en_reporte(
+            cves_kernel, "kernel", kernel_version, "kernel", reporte
+        )
 
-    # 🔥 NUEVO: guardar historial de vulnerabilidades detectadas
-    guardar_historial(len(reporte))
+    # -------------------------------
+    # MÓDULOS REALES
+    # -------------------------------
+    modulos_reales = drivers_info["modulos_kernel"]
+
+    for modulo in modulos_reales:
+        cves_mod = consultar_cve_keyword(modulo)
+        procesar_items_cve_en_reporte(
+            cves_mod, modulo, "N/A", "modulo", reporte
+        )
+
+    # -------------------------------
+    # CPU / BIOS / UEFI (básico)
+    # -------------------------------
+    procesar_items_cve_en_reporte(
+        consultar_cve_keyword("intel cpu"),
+        "intel_cpu", "N/A", "cpu", reporte
+    )
+
+    procesar_items_cve_en_reporte(
+        consultar_cve_keyword("amd cpu"),
+        "amd_cpu", "N/A", "cpu", reporte
+    )
+
+    procesar_items_cve_en_reporte(
+        consultar_cve_keyword("uefi"),
+        "uefi", "N/A", "firmware", reporte
+    )
+
+    procesar_items_cve_en_reporte(
+        consultar_cve_keyword("bios"),
+        "bios", "N/A", "bios", reporte
+    )
+
+    # -------------------------------
+    # APT
+    # -------------------------------
+    apt_vulnerables = scan_apt_vulnerabilities()
+
+    for pkg in apt_vulnerables:
+        partes = pkg.split()
+        nombre = partes[0].split("/")[0] if len(partes) > 0 else "desconocido"
+        version_nueva = partes[1] if len(partes) > 1 else "desconocida"
+
+        reporte.append({
+            "cve": "APT-SECURITY",
+            "libreria": nombre,
+            "version": version_nueva,
+            "score": 5.0,
+            "severidad": "MEDIUM",
+            "fecha_publicacion": "desconocida",
+            "fecha_detectado": datetime.now().isoformat(timespec="seconds"),
+            "descripcion": "Actualización de seguridad disponible para este paquete.",
+            "vector": "LOCAL",
+            "impacto": {
+                "confidencialidad": "LOW",
+                "integridad": "LOW",
+                "disponibilidad": "LOW"
+            },
+            "fix": f"Actualizar paquete: {nombre}",
+            "sugerencia": "Ejecutar apt upgrade para aplicar parches de seguridad.",
+            "driver": None,
+            "origen": "apt",
+            "enlace": f"https://packages.debian.org/search?keywords={nombre}"
+        })
+
+    # -------------------------------
+    # ORDENAR
+    # -------------------------------
+    reporte.sort(
+        key=lambda x: (
+            0 if x["origen"] == "apt" else 1,
+            -x.get("score", 0)
+        )
+    )
+
+    # -------------------------------
+    # NUEVOS DATOS DEL HOST
+    # -------------------------------
+    interfaces = get_network_interfaces()
+    discos = get_disks()
+    modulos = get_kernel_modules()
+    librerias = get_installed_libraries()
+
+    # -------------------------------
+    # GUARDAR REPORTE
+    # -------------------------------
+    generar_reporte(
+        reporte, ip, drivers_info, apt_vulnerables,
+        interfaces, discos, modulos, librerias
+    )
+
+    # -------------------------------
+    # HISTORIAL
+    # -------------------------------
+    historial_path = "output/historial.json"
+
+    entrada = {
+        "fecha": datetime.now().strftime("%Y-%m-%d"),
+        "total": len(reporte)
+    }
+
+    if os.path.exists(historial_path):
+        try:
+            with open(historial_path, "r") as f:
+                historial = json.load(f)
+        except:
+            historial = []
+    else:
+        historial = []
+
+    historial.append(entrada)
+
+    with open(historial_path, "w") as f:
+        json.dump(historial, f, indent=4)
+
+    print("📄 Historial actualizado")
 
 
 if __name__ == "__main__":

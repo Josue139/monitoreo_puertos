@@ -1,89 +1,112 @@
-import os
 import platform
 import subprocess
-from datetime import datetime
+import json
+import os
 
-def leer_archivo(ruta):
-    """Lee un archivo si existe, sino devuelve None."""
+# ============================================================
+#  UTILIDAD PARA EJECUTAR COMANDOS
+# ============================================================
+def run_cmd(cmd):
     try:
-        with open(ruta, "r") as f:
-            return f.read().strip()
+        result = subprocess.check_output(cmd, shell=True, text=True)
+        return result.strip()
     except:
-        return None
+        return "N/A"
 
 
-def obtener_kernel_version():
-    """Versión del kernel del host (compartido con Docker)."""
-    version = leer_archivo("/proc/version")
-    if version:
-        return version
+# ============================================================
+#  KERNEL REAL
+# ============================================================
+def get_kernel():
     return platform.release()
 
 
-def obtener_modulos_kernel():
-    """Lista de módulos del kernel cargados (drivers)."""
-    contenido = leer_archivo("/proc/modules")
-    if not contenido:
+# ============================================================
+#  CPU REAL
+# ============================================================
+def get_cpu_info():
+    cpu = run_cmd("lscpu | grep 'Model name' | awk -F ':' '{print $2}'")
+    if cpu == "N/A":
+        cpu = run_cmd("cat /proc/cpuinfo | grep 'model name' | head -1 | awk -F ':' '{print $2}'")
+    return cpu.strip()
+
+
+# ============================================================
+#  BIOS / UEFI
+# ============================================================
+def get_bios_info():
+    bios = run_cmd("dmidecode -s bios-version")
+    vendor = run_cmd("dmidecode -s bios-vendor")
+    return f"{vendor} {bios}".strip()
+
+def get_uefi_info():
+    return run_cmd("ls /sys/firmware/efi 2>/dev/null && echo 'UEFI' || echo 'Legacy BIOS'")
+
+
+# ============================================================
+#  MÓDULOS DEL KERNEL REAL
+# ============================================================
+def get_loaded_modules():
+    try:
+        return os.listdir("/sys/module")
+    except:
         return []
 
-    modulos = []
-    for linea in contenido.split("\n"):
-        partes = linea.split()
-        if len(partes) >= 1:
-            modulos.append(partes[0])  # nombre del módulo
-    return modulos
+
+# ============================================================
+#  OS DEL CONTENEDOR
+# ============================================================
+def get_os_info():
+    try:
+        with open("/etc/os-release") as f:
+            return f.read()
+    except:
+        return "N/A"
 
 
-def obtener_interfaces_red():
-    """Interfaces de red visibles desde Docker."""
+# ============================================================
+#  INTERFACES DE RED REALES
+# ============================================================
+def get_network_interfaces():
     try:
         return os.listdir("/sys/class/net")
     except:
         return []
 
 
-def obtener_discos():
-    """Dispositivos de bloque visibles."""
+# ============================================================
+#  DISCOS REALES
+# ============================================================
+def get_disks():
     try:
         return os.listdir("/sys/block")
     except:
         return []
 
 
-def obtener_os_contenedor():
-    """Información de la distribución base del contenedor."""
-    contenido = leer_archivo("/etc/os-release")
-    if not contenido:
-        return "Desconocido"
-
-    datos = {}
-    for linea in contenido.split("\n"):
-        if "=" in linea:
-            k, v = linea.split("=", 1)
-            datos[k] = v.strip('"')
-
-    return f"{datos.get('NAME', 'Linux')} {datos.get('VERSION', '')}"
-
-
-def obtener_arquitectura():
-    """Arquitectura del sistema."""
-    return platform.machine()
-
-
+# ============================================================
+#  FUNCIÓN PRINCIPAL QUE scanner.py NECESITA
+# ============================================================
 def scan_drivers_summary():
-    """Escaneo completo de drivers accesibles desde Docker sin root."""
     return {
-        "fecha_detectado": datetime.now().isoformat(),
-        "kernel_version": obtener_kernel_version(),
-        "arquitectura": obtener_arquitectura(),
-        "os_contenedor": obtener_os_contenedor(),
-        "modulos_kernel": obtener_modulos_kernel(),
-        "interfaces_red": obtener_interfaces_red(),
-        "discos_detectados": obtener_discos()
+        "kernel_version": get_kernel(),
+        "cpu": get_cpu_info(),
+        "bios": get_bios_info(),
+        "uefi": get_uefi_info(),
+        "modulos_kernel": get_loaded_modules(),
+        "os_contenedor": get_os_info(),
+        "interfaces_red": get_network_interfaces(),
+        "discos_detectados": get_disks(),
+        "arquitectura": platform.machine()
     }
 
 
+# Alias para compatibilidad con server.py
+def get_system_summary():
+    return scan_drivers_summary()
+
+
 if __name__ == "__main__":
-    import json
-    print(json.dumps(scan_drivers_summary(), indent=4))
+    info = scan_drivers_summary()
+    print(json.dumps(info, indent=4))
 

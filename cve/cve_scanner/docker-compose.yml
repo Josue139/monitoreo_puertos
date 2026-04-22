@@ -1,31 +1,45 @@
 services:
-  scanner:
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: cve_scanner
-    ports:
-      - "9000:9000"
+    container_name: cve_scanner_backend
+    privileged: true
+    network_mode: "host"     # 🔥 Tu backend ahora usa la red real del host
     volumes:
       - ./scanner_backend/output:/app/output
+      - /proc:/proc
+      - /sys:/sys
+      - /dev:/dev
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    # ❌ Ya no necesitas ports ni networks aquí
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cve_scanner_server
+    privileged: true
+    volumes:
+      - ./scanner_backend/output:/app/output
+      - /proc:/proc
+      - /sys:/sys
+      - /dev:/dev
     networks:
-      - internal_net
+      - cve_net
+    # 🔎 Este contenedor NO necesita host-mode porque no captura tráfico
 
   frontend:
     build:
       context: ./scanner_frontend
       dockerfile: Dockerfile
-    container_name: cve_frontend
+    container_name: cve_scanner_frontend
     ports:
       - "5173:5173"
-    depends_on:
-      - scanner
     networks:
-      - internal_net
+      - cve_net
+    # 🔥 Tu frontend sigue en red interna, pero debe llamar a http://localhost:9000
 
 networks:
-  internal_net:
-    driver: bridge
-
+  cve_net:

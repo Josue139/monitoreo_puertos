@@ -34,6 +34,17 @@ function App() {
   };
 
   /* ------------------------------------------------------------
+     🚀 EJECUTAR ESCANEO AUTOMÁTICO AL ENTRAR AL DASHBOARD
+     - Llama a /api/scan (backend)
+     - Genera un nuevo reporte y actualiza historial
+  ------------------------------------------------------------ */
+  useEffect(() => {
+    fetch("/api/scan", { method: "POST" })
+      .then(() => console.log("Escaneo ejecutado"))
+      .catch(() => console.log("Error ejecutando escaneo"));
+  }, []);
+
+  /* ------------------------------------------------------------
      📡 CARGA DE DATOS DESDE EL BACKEND
   ------------------------------------------------------------ */
   const [vulns, setVulns] = useState<Vulnerabilidad[]>([]);

@@ -3,13 +3,29 @@ import type { Vulnerabilidad } from "./types";
 
 export function VulnerabilidadesTable({ data }: { data: Vulnerabilidad[] }) {
   const [clicked, setClicked] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
+
+  const ITEMS_PER_PAGE = 200;
+  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+
+  const startIndex = (page - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+
+  const pageItems = data.slice(startIndex, endIndex);
 
   const markClicked = (cve: string) => {
     setClicked((prev) => [...new Set([...prev, cve])]);
   };
 
+  const goToFirst = () => setPage(1);
+  const goToLast = () => setPage(totalPages);
+  const goNext = () => setPage((p) => Math.min(p + 1, totalPages));
+  const goPrev = () => setPage((p) => Math.max(p - 1, 1));
+
   return (
     <div className="table-wrapper">
+
+      {/* TABLA */}
       <table className="vuln-table">
         <thead>
           <tr>
@@ -25,7 +41,7 @@ export function VulnerabilidadesTable({ data }: { data: Vulnerabilidad[] }) {
         </thead>
 
         <tbody>
-          {data.map((v, index) => {
+          {pageItems.map((v, index) => {
             const isClicked = clicked.includes(v.cve);
 
             return (
@@ -77,6 +93,40 @@ export function VulnerabilidadesTable({ data }: { data: Vulnerabilidad[] }) {
           })}
         </tbody>
       </table>
+
+      {/* PAGINACIÓN */}
+      {totalPages > 1 && (
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "10px",
+            flexWrap: "wrap"
+          }}
+        >
+          <button onClick={goToFirst} disabled={page === 1}>
+            ⏮ Primera
+          </button>
+
+          <button onClick={goPrev} disabled={page === 1}>
+            ◀ Anterior
+          </button>
+
+          <span>
+            Página {page} de {totalPages}
+          </span>
+
+          <button onClick={goNext} disabled={page === totalPages}>
+            Siguiente ▶
+          </button>
+
+          <button onClick={goToLast} disabled={page === totalPages}>
+            ⏭ Última
+          </button>
+        </div>
+      )}
     </div>
   );
 }
